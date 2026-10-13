@@ -1,4 +1,3 @@
-import { rehypeHeadingIds, unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
@@ -6,13 +5,8 @@ import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
 import tailwindcss from '@tailwindcss/vite';
 import expressiveCode from 'astro-expressive-code';
 import { defineConfig } from 'astro/config';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypeExternalLinks from 'rehype-external-links';
-import rehypeKatex from 'rehype-katex';
-import remarkMath from 'remark-math';
 import { site } from './src/data/site';
-import { rehypeScrollable } from './src/lib/markdown/rehype-scrollable';
-import { remarkArticleFeatures } from './src/lib/markdown/remark-article-features';
+import { markdownProcessor } from './src/lib/markdown/processor';
 
 export default defineConfig({
 	site: site.url,
@@ -22,36 +16,7 @@ export default defineConfig({
 	},
 	devToolbar: { enabled: false },
 	markdown: {
-		processor: unified({
-			remarkPlugins: [remarkMath, remarkArticleFeatures],
-			rehypePlugins: [
-				rehypeHeadingIds,
-				[
-					rehypeAutolinkHeadings,
-					{
-						behavior: 'wrap',
-						test: ['h2', 'h3', 'h4'],
-						properties: { className: ['heading-link'] }
-					}
-				],
-				[rehypeKatex, { output: 'htmlAndMathml', trust: false, strict: 'warn' }],
-				rehypeScrollable,
-				[
-					rehypeExternalLinks,
-					{
-						rel: ['noopener', 'noreferrer'],
-						protocols: ['http', 'https'],
-						properties: { className: ['external-link'] },
-						content: {
-							type: 'element',
-							tagName: 'span',
-							properties: { className: ['sr-only'], dataPagefindIgnore: '' },
-							children: [{ type: 'text', value: ' (external link)' }]
-						}
-					}
-				]
-			]
-		})
+		processor: markdownProcessor()
 	},
 	integrations: [
 		expressiveCode({
@@ -73,6 +38,10 @@ export default defineConfig({
 				uiFontFamily: 'var(--font-sans)',
 				frames: {
 					shadowColor: 'transparent'
+				},
+				lineNumbers: {
+					foreground: 'var(--theme-muted)',
+					highlightForeground: 'var(--theme-text)'
 				}
 			}
 		}),
