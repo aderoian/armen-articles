@@ -81,7 +81,7 @@ function renderResult(data: PagefindResultData): HTMLLIElement {
 	item.append(excerpt);
 
 	const sections = data.sub_results
-		.filter((sub) => cleanUrl(sub.url) !== cleanUrl(data.url))
+		.filter((sub) => cleanUrl(sub.url) !== cleanUrl(data.url) && sub.title !== data.meta['title'])
 		.slice(0, MAX_SUB_RESULTS);
 	if (sections.length > 0) {
 		const list = element('ul', 'border-border mt-3 flex flex-col gap-2 border-l pl-4 text-sm');

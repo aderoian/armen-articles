@@ -45,7 +45,7 @@ export default defineConfig({
 						content: {
 							type: 'element',
 							tagName: 'span',
-							properties: { className: ['sr-only'] },
+							properties: { className: ['sr-only'], dataPagefindIgnore: '' },
 							children: [{ type: 'text', value: ' (external link)' }]
 						}
 					}

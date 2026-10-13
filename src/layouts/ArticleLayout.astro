@@ -98,7 +98,7 @@ const breadcrumbs = [
 							{data.title}
 						</h1>
 						<p class="text-muted mt-4 text-lg text-pretty">{data.description}</p>
-						<div class="mt-5 flex flex-col gap-3">
+						<div class="mt-5 flex flex-col gap-3" data-pagefind-ignore>
 							<ArticleMeta
 								publishedAt={data.publishedAt}
 								updatedAt={data.updatedAt}
@@ -107,15 +107,11 @@ const breadcrumbs = [
 							/>
 							<TagList tags={data.tags} />
 						</div>
-						<span hidden data-pagefind-meta="category">
-							{category.title}
-						</span>
-						<span hidden data-pagefind-meta="date">
-							{formatDate(data.publishedAt)}
-						</span>
-						<span hidden data-pagefind-filter="category">
-							{category.title}
-						</span>
+						<div hidden data-pagefind-ignore>
+							<span data-pagefind-meta="category">{category.title}</span>
+							<span data-pagefind-meta="date">{formatDate(data.publishedAt)}</span>
+							<span data-pagefind-filter="category">{category.title}</span>
+						</div>
 					</header>
 
 					{data.coverImage && (

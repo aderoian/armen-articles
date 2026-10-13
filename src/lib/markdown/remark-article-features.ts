@@ -1,5 +1,5 @@
 import type { ElementContent } from 'hast';
-import type { Code, Root } from 'mdast';
+import type { Code, Root, RootContent } from 'mdast';
 import { visit } from 'unist-util-visit';
 import type { VFile } from 'vfile';
 
@@ -67,19 +67,25 @@ export function remarkArticleFeatures() {
 			}
 		});
 
-		visit(tree, 'code', (node: Code) => {
-			if (node.lang !== 'mermaid') return;
+		visit(tree, 'code', (node: Code, index, parent) => {
+			if (node.lang !== 'mermaid' || !parent || index === undefined) return;
 			features.hasMermaid = true;
 			const title = node.meta?.match(TITLE_META)?.[1];
-			node.data = {
-				hName: 'figure',
-				hProperties: {
-					className: ['mermaid-figure'],
-					dataMermaid: node.value,
-					...(title ? { dataTitle: title } : {})
-				},
-				hChildren: mermaidFigureChildren(node.value, title)
+			// A custom node (rather than `code`) so remark-rehype emits a bare <figure>
+			// instead of wrapping it in <pre>, and Expressive Code leaves it alone.
+			const figure = {
+				type: 'mermaidFigure',
+				data: {
+					hName: 'figure',
+					hProperties: {
+						className: ['mermaid-figure'],
+						dataMermaid: node.value,
+						...(title ? { dataTitle: title } : {})
+					},
+					hChildren: mermaidFigureChildren(node.value, title)
+				}
 			};
+			parent.children[index] = figure as unknown as RootContent;
 		});
 
 		file.data.astro ??= {};

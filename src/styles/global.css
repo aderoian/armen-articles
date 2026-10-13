@@ -68,6 +68,13 @@
 		background: var(--theme-selection);
 	}
 
+	mark {
+		background: var(--theme-selection);
+		color: inherit;
+		border-radius: 2px;
+		padding-inline: 0.1em;
+	}
+
 	a {
 		@apply text-accent underline-offset-4;
 	}
@@ -99,138 +106,138 @@
 	}
 }
 
-@layer components {
-	.prose {
-		--tw-prose-body: var(--theme-text);
-		--tw-prose-headings: var(--theme-text);
-		--tw-prose-lead: var(--theme-muted);
-		--tw-prose-links: var(--theme-accent);
-		--tw-prose-bold: var(--theme-text);
-		--tw-prose-counters: var(--theme-muted);
-		--tw-prose-bullets: var(--theme-border-strong);
-		--tw-prose-hr: var(--theme-border);
-		--tw-prose-quotes: var(--theme-text);
-		--tw-prose-quote-borders: var(--theme-accent);
-		--tw-prose-captions: var(--theme-muted);
-		--tw-prose-kbd: var(--theme-text);
-		--tw-prose-code: var(--theme-text);
-		--tw-prose-th-borders: var(--theme-border-strong);
-		--tw-prose-td-borders: var(--theme-border);
-		max-width: none;
-		line-height: 1.75;
-	}
+/* Unlayered so these refinements win over the typography plugin's utilities. */
+.prose {
+	--tw-prose-body: var(--theme-text);
+	--tw-prose-headings: var(--theme-text);
+	--tw-prose-lead: var(--theme-muted);
+	--tw-prose-links: var(--theme-accent);
+	--tw-prose-bold: var(--theme-text);
+	--tw-prose-counters: var(--theme-muted);
+	--tw-prose-bullets: var(--theme-border-strong);
+	--tw-prose-hr: var(--theme-border);
+	--tw-prose-quotes: var(--theme-text);
+	--tw-prose-quote-borders: var(--theme-accent);
+	--tw-prose-captions: var(--theme-muted);
+	--tw-prose-kbd: var(--theme-text);
+	--tw-prose-code: var(--theme-text);
+	--tw-prose-th-borders: var(--theme-border-strong);
+	--tw-prose-td-borders: var(--theme-border);
+	max-width: none;
+	line-height: 1.75;
+}
 
-	.prose :where(code):not(:where(pre code, .expressive-code code)) {
-		@apply bg-surface border-border rounded border px-1.5 py-0.5 text-[0.875em] font-normal;
-	}
+.prose :where(code):not(:where(pre code, .expressive-code code)) {
+	@apply bg-surface border-border rounded border px-1.5 py-0.5 text-[0.875em] font-normal;
+}
 
-	.prose :where(code):not(:where(pre code))::before,
-	.prose :where(code):not(:where(pre code))::after {
-		content: none;
-	}
+.prose :where(code):not(:where(pre code))::before,
+.prose :where(code):not(:where(pre code))::after {
+	content: none;
+}
 
-	.prose :where(blockquote) {
-		@apply font-normal not-italic;
-	}
+.prose :where(blockquote) {
+	@apply font-normal not-italic;
+}
 
-	.prose :where(blockquote p:first-of-type)::before,
-	.prose :where(blockquote p:last-of-type)::after {
-		content: none;
-	}
+.prose :where(blockquote p:first-of-type)::before,
+.prose :where(blockquote p:last-of-type)::after {
+	content: none;
+}
 
-	.prose .expressive-code {
-		@apply my-6;
-	}
+.prose .expressive-code {
+	@apply my-6;
+}
 
-	.prose a.heading-link {
-		color: inherit;
-		text-decoration: none;
-	}
+.prose a.heading-link {
+	color: inherit;
+	font-weight: inherit;
+	text-decoration: none;
+}
 
-	.prose a.heading-link:hover::after,
-	.prose a.heading-link:focus-visible::after {
-		content: '#' / '';
-		@apply text-muted ml-2 font-normal;
-	}
+.prose a.heading-link:hover::after,
+.prose a.heading-link:focus-visible::after {
+	content: '#' / '';
+	@apply text-muted ml-2 font-normal;
+}
 
-	.prose a.external-link::after {
-		content: '↗' / '';
-		@apply ml-0.5 text-[0.75em];
-	}
+.prose a.external-link::after {
+	content: '↗' / '';
+	@apply ml-0.5 text-[0.75em];
+}
 
-	.prose .table-scroll {
-		@apply border-border my-6 overflow-x-auto rounded-lg border;
-	}
+.prose .table-scroll {
+	@apply border-border my-6 overflow-x-auto rounded-lg border;
+}
 
-	.prose .table-scroll table {
-		@apply my-0 min-w-full;
-	}
+.prose .table-scroll table {
+	@apply my-0 min-w-full;
+}
 
-	.prose .table-scroll :where(th, td):first-child {
-		@apply pl-4;
-	}
+.prose .table-scroll :where(th, td):first-child {
+	@apply pl-4;
+}
 
-	.prose .table-scroll :where(th, td):last-child {
-		@apply pr-4;
-	}
+.prose .table-scroll :where(th, td):last-child {
+	@apply pr-4;
+}
 
-	.prose .table-scroll thead {
-		@apply bg-surface;
-	}
+.prose .table-scroll thead {
+	@apply bg-surface;
+}
 
-	.prose .katex-display {
-		@apply overflow-x-auto overflow-y-hidden py-2;
-	}
+.prose .katex-display {
+	@apply overflow-x-auto overflow-y-hidden py-2;
+}
 
-	.prose .katex {
-		font-size: 1.08em;
-	}
+.prose .katex {
+	font-size: 1.08em;
+}
 
-	.prose img {
-		@apply border-border rounded-lg border;
-	}
+.prose img {
+	@apply border-border rounded-lg border;
+}
 
-	.prose .footnotes {
-		@apply border-border text-muted mt-12 border-t pt-6 text-sm;
-	}
+.prose .footnotes {
+	@apply border-border text-muted mt-12 border-t pt-6 text-sm;
+}
 
-	.prose .footnotes h2 {
-		@apply text-text mt-0 text-base;
-	}
+.prose .footnotes h2 {
+	@apply text-text mt-0 text-base;
+}
 
-	.prose sup a[data-footnote-ref] {
-		@apply no-underline;
-	}
+.prose sup a[data-footnote-ref] {
+	@apply no-underline;
+}
 
-	.mermaid-figure {
-		@apply border-border bg-bg my-8 rounded-lg border p-4;
-	}
+.mermaid-figure {
+	@apply border-border bg-bg my-8 rounded-lg border p-4;
+}
 
-	.mermaid-figure .mermaid-render {
-		@apply flex justify-center overflow-x-auto;
-	}
+.mermaid-figure .mermaid-render {
+	@apply flex justify-center overflow-x-auto;
+}
 
-	.mermaid-figure .mermaid-render:empty {
-		@apply hidden;
-	}
+.mermaid-figure .mermaid-render:empty {
+	@apply hidden;
+}
 
-	.mermaid-figure .mermaid-render svg {
-		@apply h-auto max-w-full;
-	}
+.mermaid-figure .mermaid-render svg {
+	@apply h-auto max-w-full;
+}
 
-	.mermaid-figure .mermaid-source summary {
-		@apply text-muted cursor-pointer text-sm;
-	}
+.mermaid-figure .mermaid-source summary {
+	@apply text-muted cursor-pointer text-sm;
+}
 
-	.mermaid-figure .mermaid-source pre {
-		@apply bg-surface text-text mt-2 mb-0 overflow-x-auto rounded p-3 font-mono text-sm whitespace-pre;
-	}
+.mermaid-figure .mermaid-source pre {
+	@apply bg-surface text-text mt-2 mb-0 overflow-x-auto rounded p-3 font-mono text-sm whitespace-pre;
+}
 
-	.mermaid-figure[data-rendered] .mermaid-source {
-		@apply mt-3;
-	}
+.mermaid-figure[data-rendered] .mermaid-source {
+	@apply mt-3;
+}
 
-	.mermaid-figure figcaption {
-		@apply text-muted mt-3 text-center text-sm;
-	}
+.mermaid-figure figcaption {
+	@apply text-muted mt-3 text-center text-sm;
 }

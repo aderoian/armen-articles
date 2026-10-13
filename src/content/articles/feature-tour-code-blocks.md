@@ -74,7 +74,7 @@ def chunks[T](items: Sequence[T], size: int) -> Iterator[Sequence[T]]:
 
 TypeScript with individual lines marked as inserted or deleted:
 
-```ts title="slug.ts" del={3} ins={4}
+```ts title="slug.ts" del={3} ins={4-6}
 export function slugify(input: string): string {
   return input
     .toLowerCase()
@@ -160,9 +160,5 @@ float Luminance(float3 linearRgb)
 Long lines scroll horizontally rather than wrapping, so indentation and alignment stay intact on narrow screens:
 
 ```ts
-export const veryLongConfigurationValue = {
-  name: 'example',
-  description:
-    'This line is intentionally long so that it overflows the article column and demonstrates horizontal scrolling.'
-};
+export const veryLongConfigurationValue = { name: 'example', description: 'This line is intentionally long so that it overflows the article column and demonstrates horizontal scrolling.' };
 ```

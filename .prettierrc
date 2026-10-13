@@ -6,7 +6,10 @@
 	"plugins": ["prettier-plugin-astro"],
 	"overrides": [
 		{ "files": "*.astro", "options": { "parser": "astro" } },
-		{ "files": ["*.md", "*.mdx"], "options": { "useTabs": false, "proseWrap": "preserve" } },
+		{
+			"files": ["*.md", "*.mdx"],
+			"options": { "useTabs": false, "proseWrap": "preserve", "embeddedLanguageFormatting": "off" }
+		},
 		{ "files": ["*.yml", "*.yaml"], "options": { "useTabs": false } }
 	]
 }
