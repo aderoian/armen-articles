@@ -1,0 +1,81 @@
+---
+import type { GetStaticPaths } from 'astro';
+import ArticleMeta from '@/components/article/ArticleMeta.astro';
+import Breadcrumbs from '@/components/navigation/Breadcrumbs.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { series, seriesKeys, type SeriesKey } from '@/data/series';
+import { site } from '@/data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getArticles, type Article } from '@/lib/articles/collection';
+import { readingTime } from '@/lib/articles/reading-time';
+import { seriesArticles } from '@/lib/articles/series';
+import { breadcrumbJsonLd } from '@/lib/metadata/structured-data';
+import { routes } from '@/lib/utils/routes';
+
+export const getStaticPaths = (async () => {
+	const articles = await getArticles();
+	return seriesKeys
+		.map((key) => ({ key, parts: seriesArticles(articles, key) }))
+		.filter((entry) => entry.parts.length > 0)
+		.map((entry) => ({ params: { series: entry.key }, props: entry }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+	key: SeriesKey;
+	parts: Article[];
+}
+
+const { key, parts } = Astro.props;
+const definition = series[key];
+const breadcrumbs = [
+	{ name: 'Series', path: routes.seriesIndex },
+	{ name: definition.title, path: routes.series(key) }
+];
+---
+
+<BaseLayout
+	title={`${definition.title} (series) · ${site.author.name}`}
+	description={definition.description}
+	jsonLd={[breadcrumbJsonLd(breadcrumbs)]}
+>
+	<div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+		<Breadcrumbs items={breadcrumbs} />
+		<PageHeader eyebrow="Series" title={definition.title} description={definition.description}>
+			<p class="text-muted mt-2 text-sm">
+				{parts.length}
+				{parts.length === 1 ? 'part' : 'parts'}, in reading order
+			</p>
+		</PageHeader>
+		<ol class="flex flex-col gap-4" aria-label="Parts in reading order">
+			{parts.map((article, index) => (
+				<li class="border-border hover:border-border-strong relative flex gap-4 rounded-lg border p-5">
+					<span
+						class="bg-surface text-accent flex size-9 shrink-0 items-center justify-center rounded-full font-mono text-sm font-semibold"
+						aria-hidden="true"
+					>
+						{index + 1}
+					</span>
+					<div class="flex min-w-0 flex-col gap-2">
+						<h2 class="text-lg leading-snug font-semibold">
+							<a
+								href={routes.article(article.id)}
+								class="text-text hover:text-accent no-underline after:absolute after:inset-0"
+							>
+								<span class="sr-only">Part {index + 1}: </span>
+								{article.data.title}
+							</a>
+						</h2>
+						<p class="text-muted">{article.data.description}</p>
+						<ArticleMeta
+							publishedAt={article.data.publishedAt}
+							updatedAt={article.data.updatedAt}
+							category={article.data.category}
+							minutes={readingTime(article.body ?? '').minutes}
+							linkCategory={false}
+						/>
+					</div>
+				</li>
+			))}
+		</ol>
+	</div>
+</BaseLayout>

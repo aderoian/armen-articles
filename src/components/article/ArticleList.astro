@@ -1,0 +1,30 @@
+---
+import ArticleCard from '@/components/article/ArticleCard.astro';
+import type { Article } from '@/lib/articles/collection';
+
+export interface Props {
+	articles: Article[];
+	headingLevel?: 2 | 3;
+	emptyMessage?: string;
+	label?: string;
+}
+
+const {
+	articles,
+	headingLevel = 2,
+	emptyMessage = 'No articles have been published here yet.',
+	label
+} = Astro.props;
+---
+
+{articles.length > 0 ? (
+	<ol class="flex flex-col gap-4" aria-label={label}>
+		{articles.map((article) => (
+			<li>
+				<ArticleCard article={article} headingLevel={headingLevel} />
+			</li>
+		))}
+	</ol>
+) : (
+	<p class="border-border text-muted rounded-lg border border-dashed p-6">{emptyMessage}</p>
+)}

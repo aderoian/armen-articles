@@ -1,0 +1,37 @@
+---
+import SiteFooter from '@/components/navigation/SiteFooter.astro';
+import SiteHeader from '@/components/navigation/SiteHeader.astro';
+import SeoHead, { type Props as SeoProps } from '@/components/seo/SeoHead.astro';
+import '@/styles/global.css';
+
+export type Props = SeoProps;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script is:inline src="/scripts/theme-init.js"></script>
+		<meta name="color-scheme" content="light dark" />
+		<meta name="theme-color" content="#fbfcfd" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#0b1118" media="(prefers-color-scheme: dark)" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<meta name="generator" content={Astro.generator} />
+		<SeoHead {...Astro.props} />
+		<slot name="head" />
+	</head>
+	<body class="flex min-h-screen flex-col">
+		<a
+			href="#main-content"
+			class="bg-accent text-bg sr-only z-50 rounded-md px-4 py-2 font-medium focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+		>
+			Skip to content
+		</a>
+		<SiteHeader />
+		<main id="main-content" tabindex="-1" class="flex-1 focus:outline-none">
+			<slot />
+		</main>
+		<SiteFooter />
+	</body>
+</html>

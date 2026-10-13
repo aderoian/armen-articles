@@ -1,0 +1,54 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+export interface Props {
+	headings: MarkdownHeading[];
+	/** `sidebar` is the sticky desktop list; `inline` is the collapsible mobile version. */
+	variant: 'sidebar' | 'inline';
+}
+
+const { headings, variant } = Astro.props;
+const items = headings.filter(
+	(heading) => heading.depth >= 2 && heading.depth <= 3 && heading.slug !== 'footnote-label'
+);
+const labelId = `toc-label-${variant}`;
+---
+
+{items.length > 1 &&
+	(variant === 'sidebar' ? (
+		<nav aria-labelledby={labelId} class="text-sm" data-pagefind-ignore>
+			<h2 id={labelId} class="text-text mb-3 text-xs font-semibold tracking-wider uppercase">
+				On this page
+			</h2>
+			<ol class="border-border flex flex-col gap-1 border-l">
+				{items.map((heading) => (
+					<li>
+						<a
+							href={`#${heading.slug}`}
+							class:list={[
+								'text-muted hover:text-text hover:border-accent -ml-px block border-l border-transparent py-1 pr-2 leading-snug no-underline',
+								heading.depth === 3 ? 'pl-6' : 'pl-3'
+							]}
+						>
+							{heading.text}
+						</a>
+					</li>
+				))}
+			</ol>
+		</nav>
+	) : (
+		<details class="border-border bg-surface mb-8 rounded-lg border text-sm" data-pagefind-ignore>
+			<summary class="cursor-pointer px-4 py-3 font-medium">On this page</summary>
+			<nav aria-label="On this page" class="px-4 pb-4">
+				<ol class="flex flex-col gap-1">
+					{items.map((heading) => (
+						<li class:list={[heading.depth === 3 && 'pl-4']}>
+							<a href={`#${heading.slug}`} class="inline-block py-1 no-underline">
+								{heading.text}
+							</a>
+						</li>
+					))}
+				</ol>
+			</nav>
+		</details>
+	))}

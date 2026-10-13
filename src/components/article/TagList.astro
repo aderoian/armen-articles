@@ -1,0 +1,26 @@
+---
+import { routes } from '@/lib/utils/routes';
+
+export interface Props {
+	tags: string[];
+	label?: string;
+}
+
+const { tags, label = 'Tags' } = Astro.props;
+---
+
+{tags.length > 0 && (
+	<ul class="flex flex-wrap gap-1.5" aria-label={label}>
+		{tags.map((tag) => (
+			<li>
+				<a
+					href={routes.tag(tag)}
+					class="border-border text-muted hover:border-accent hover:text-accent relative inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-xs no-underline"
+				>
+					<span aria-hidden="true">#</span>
+					{tag}
+				</a>
+			</li>
+		))}
+	</ul>
+)}

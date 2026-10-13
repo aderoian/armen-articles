@@ -1,0 +1,53 @@
+---
+import type { GetStaticPaths } from 'astro';
+import ArticleList from '@/components/article/ArticleList.astro';
+import Breadcrumbs from '@/components/navigation/Breadcrumbs.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { categories, categoryKeys, type CategoryKey } from '@/data/categories';
+import { site } from '@/data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getArticles, type Article } from '@/lib/articles/collection';
+import { filterByCategory } from '@/lib/articles/filters';
+import { breadcrumbJsonLd } from '@/lib/metadata/structured-data';
+import { routes } from '@/lib/utils/routes';
+
+export const getStaticPaths = (async () => {
+	const articles = await getArticles();
+	return categoryKeys
+		.map((key) => ({ key, articles: filterByCategory(articles, key) }))
+		.filter((entry) => entry.articles.length > 0)
+		.map((entry) => ({
+			params: { category: entry.key },
+			props: { key: entry.key, articles: entry.articles }
+		}));
+}) satisfies GetStaticPaths;
+
+interface Props {
+	key: CategoryKey;
+	articles: Article[];
+}
+
+const { key, articles } = Astro.props;
+const category = categories[key];
+const breadcrumbs = [
+	{ name: 'Categories', path: routes.categories },
+	{ name: category.title, path: routes.category(key) }
+];
+---
+
+<BaseLayout
+	title={`${category.title} · ${site.author.name}`}
+	description={category.description}
+	jsonLd={[breadcrumbJsonLd(breadcrumbs)]}
+>
+	<div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+		<Breadcrumbs items={breadcrumbs} />
+		<PageHeader eyebrow="Category" title={category.title} description={category.description}>
+			<p class="text-muted mt-2 text-sm">
+				{articles.length}
+				{articles.length === 1 ? 'article' : 'articles'}
+			</p>
+		</PageHeader>
+		<ArticleList articles={articles} label={`Articles in ${category.title}`} />
+	</div>
+</BaseLayout>

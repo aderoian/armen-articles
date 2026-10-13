@@ -1,0 +1,47 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import { site } from '@/data/site';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
+import { getArticles, type Article } from '@/lib/articles/collection';
+import { readingTime } from '@/lib/articles/reading-time';
+import { relatedArticles } from '@/lib/articles/related';
+import { seriesPosition } from '@/lib/articles/series';
+import { absoluteUrl } from '@/lib/utils/routes';
+
+export const getStaticPaths = (async () => {
+	const articles = await getArticles();
+	return articles.map((article) => ({
+		params: { slug: article.id },
+		props: { article, articles }
+	}));
+}) satisfies GetStaticPaths;
+
+interface Props {
+	article: Article;
+	articles: Article[];
+}
+
+const { article, articles } = Astro.props;
+const { Content, headings, remarkPluginFrontmatter } = await render(article);
+
+const socialImage = article.data.coverImage
+	? absoluteUrl((await getImage({ src: article.data.coverImage, width: 1200, format: 'png' })).src)
+	: undefined;
+---
+
+<ArticleLayout
+	article={article}
+	headings={headings}
+	features={{
+		hasMath: remarkPluginFrontmatter['hasMath'] === true,
+		hasMermaid: remarkPluginFrontmatter['hasMermaid'] === true
+	}}
+	minutes={readingTime(article.body ?? '').minutes}
+	seriesPosition={seriesPosition(articles, article)}
+	related={relatedArticles(article, articles, site.relatedArticleCount)}
+	socialImage={socialImage}
+>
+	<Content />
+</ArticleLayout>

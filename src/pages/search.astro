@@ -1,0 +1,39 @@
+---
+import SearchForm from '@/components/search/SearchForm.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { site } from '@/data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+	title={`Search · ${site.author.name}`}
+	description="Full-text search across every published article."
+>
+	<div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14" data-search-root>
+		<PageHeader
+			title="Search"
+			description="Search titles, descriptions, headings, and full text of every published article."
+		/>
+		<SearchForm id="search-page-input" autofocus />
+		<p class="text-muted mt-3 text-xs">
+			Tip: press <kbd class="border-border rounded border px-1 font-mono">↓</kbd> to move from the
+			search field into the results.
+		</p>
+		<noscript>
+			<p class="border-border mt-6 rounded-lg border p-4">
+				Search runs in your browser and needs JavaScript. You can still browse the{' '}
+				<a href="/articles">archive</a>, <a href="/categories">categories</a>, or{' '}
+				<a href="/tags">tags</a>.
+			</p>
+		</noscript>
+		<p data-search-status role="status" aria-live="polite" class="text-muted mt-6 text-sm"></p>
+		<ol data-search-results class="mt-4 flex flex-col gap-4" aria-label="Search results"></ol>
+	</div>
+</BaseLayout>
+
+<script>
+	import { initSearch } from '@/components/search/search-client';
+
+	const root = document.querySelector<HTMLElement>('[data-search-root]');
+	if (root) initSearch(root);
+</script>

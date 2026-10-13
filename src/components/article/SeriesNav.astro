@@ -1,0 +1,84 @@
+---
+import { series, type SeriesKey } from '@/data/series';
+import type { Article } from '@/lib/articles/collection';
+import type { SeriesPosition } from '@/lib/articles/series';
+import { routes } from '@/lib/utils/routes';
+
+export interface Props {
+	position: SeriesPosition<Article>;
+	/** `summary` sits under the article header; `footer` shows previous/next links. */
+	variant: 'summary' | 'footer';
+}
+
+const { position, variant } = Astro.props;
+const definition = series[position.key as SeriesKey];
+const part = position.index + 1;
+const total = position.articles.length;
+---
+
+{variant === 'summary' ? (
+	<aside
+		aria-label="Series"
+		class="border-border bg-surface mb-8 rounded-lg border p-4 text-sm"
+		data-pagefind-ignore
+	>
+		<p class="text-muted">
+			Part {part} of {total} in the series{' '}
+			<a href={routes.series(position.key)} class="font-medium">
+				{definition.title}
+			</a>
+		</p>
+		<details class="mt-2">
+			<summary class="text-muted cursor-pointer">All parts</summary>
+			<ol class="mt-2 flex list-decimal flex-col gap-1 pl-6">
+				{position.articles.map((article, index) => (
+					<li>
+						{index === position.index ? (
+							<span aria-current="page" class="font-medium">
+								{article.data.title}
+							</span>
+						) : (
+							<a href={routes.article(article.id)}>{article.data.title}</a>
+						)}
+					</li>
+				))}
+			</ol>
+		</details>
+	</aside>
+) : (
+	<nav aria-label={`Series: ${definition.title}`} class="mt-12" data-pagefind-ignore>
+		<p class="text-muted mb-3 text-sm">
+			<a href={routes.series(position.key)}>{definition.title}</a> · Part {part} of {total}
+		</p>
+		<ul class="grid gap-3 sm:grid-cols-2">
+			<li>
+				{position.previous && (
+					<a
+						href={routes.article(position.previous.id)}
+						rel="prev"
+						class="border-border hover:border-accent flex h-full flex-col gap-1 rounded-lg border p-4 no-underline"
+					>
+						<span class="text-muted text-xs tracking-wide uppercase">
+							<span aria-hidden="true">← </span>Previous part
+						</span>
+						<span class="text-text font-medium">{position.previous.data.title}</span>
+					</a>
+				)}
+			</li>
+			<li>
+				{position.next && (
+					<a
+						href={routes.article(position.next.id)}
+						rel="next"
+						class="border-border hover:border-accent flex h-full flex-col gap-1 rounded-lg border p-4 text-right no-underline"
+					>
+						<span class="text-muted text-xs tracking-wide uppercase">
+							Next part<span aria-hidden="true"> →</span>
+						</span>
+						<span class="text-text font-medium">{position.next.data.title}</span>
+					</a>
+				)}
+			</li>
+		</ul>
+	</nav>
+)}

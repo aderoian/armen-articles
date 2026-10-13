@@ -1,0 +1,38 @@
+---
+import { routes } from '@/lib/utils/routes';
+
+export interface Props {
+	id: string;
+	value?: string;
+	autofocus?: boolean;
+	/** Visually show the label above the field. */
+	showLabel?: boolean;
+}
+
+const { id, value = '', autofocus = false, showLabel = false } = Astro.props;
+---
+
+<form action={routes.search} method="get" role="search" class="w-full" data-search-form>
+	<label for={id} class:list={['mb-2 block text-sm font-medium', !showLabel && 'sr-only']}>
+		Search articles
+	</label>
+	<div class="flex gap-2">
+		<input
+			id={id}
+			name="q"
+			type="search"
+			value={value}
+			autocomplete="off"
+			spellcheck="false"
+			placeholder="Search titles, headings, and full text…"
+			autofocus={autofocus}
+			class="border-border-strong bg-bg text-text placeholder:text-muted focus-visible:border-accent min-h-11 w-full min-w-0 rounded-md border px-3 text-base"
+		/>
+		<button
+			type="submit"
+			class="bg-accent text-bg min-h-11 shrink-0 rounded-md px-4 font-medium hover:opacity-90"
+		>
+			Search
+		</button>
+	</div>
+</form>

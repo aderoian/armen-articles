@@ -1,0 +1,170 @@
+---
+import type { MarkdownHeading } from 'astro';
+import { Image } from 'astro:assets';
+import katexStylesheet from 'katex/dist/katex.min.css?url';
+import ArticleMeta from '@/components/article/ArticleMeta.astro';
+import RelatedArticles from '@/components/article/RelatedArticles.astro';
+import SeriesNav from '@/components/article/SeriesNav.astro';
+import TableOfContents from '@/components/article/TableOfContents.astro';
+import TagList from '@/components/article/TagList.astro';
+import MermaidLoader from '@/components/diagrams/MermaidLoader.astro';
+import Breadcrumbs from '@/components/navigation/Breadcrumbs.astro';
+import { categories } from '@/data/categories';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import type { Article } from '@/lib/articles/collection';
+import type { SeriesPosition } from '@/lib/articles/series';
+import type { ArticleFeatures } from '@/lib/markdown/remark-article-features';
+import { articleJsonLd, breadcrumbJsonLd } from '@/lib/metadata/structured-data';
+import { formatDate, isoDate } from '@/lib/utils/dates';
+import { absoluteUrl, routes } from '@/lib/utils/routes';
+
+export interface Props {
+	article: Article;
+	headings: MarkdownHeading[];
+	features: ArticleFeatures;
+	minutes: number;
+	seriesPosition: SeriesPosition<Article> | undefined;
+	related: Article[];
+	socialImage: string | undefined;
+}
+
+const { article, headings, features, minutes, seriesPosition, related, socialImage } = Astro.props;
+const { data } = article;
+const category = categories[data.category];
+const url = absoluteUrl(routes.article(article.id));
+const breadcrumbs = [
+	{ name: 'Articles', path: routes.articles },
+	{ name: category.title, path: routes.category(data.category) },
+	{ name: data.title, path: routes.article(article.id) }
+];
+---
+
+<BaseLayout
+	title={`${data.title} · ${category.title}`}
+	description={data.description}
+	canonical={data.canonicalUrl ?? url}
+	image={socialImage}
+	imageAlt={data.coverImageAlt}
+	type="article"
+	noindex={data.draft}
+	article={{
+		publishedAt: data.publishedAt,
+		updatedAt: data.updatedAt,
+		section: category.title,
+		tags: data.tags,
+		author: data.author
+	}}
+	jsonLd={[
+		articleJsonLd({
+			title: data.title,
+			description: data.description,
+			url,
+			publishedAt: data.publishedAt,
+			updatedAt: data.updatedAt,
+			author: data.author,
+			image: socialImage,
+			keywords: data.tags,
+			section: category.title
+		}),
+		breadcrumbJsonLd(breadcrumbs)
+	]}
+>
+	<Fragment slot="head">
+		{features.hasMath && <link rel="stylesheet" href={katexStylesheet} />}
+	</Fragment>
+
+	<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+		<div class="xl:grid xl:grid-cols-[minmax(0,48rem)_15rem] xl:justify-between xl:gap-12">
+			<article class="min-w-0" aria-labelledby="article-title">
+				<Breadcrumbs items={breadcrumbs} />
+
+				{data.draft && (
+					<p
+						role="note"
+						class="border-warning bg-warning-soft text-warning mb-6 rounded-lg border px-4 py-3 text-sm font-medium"
+					>
+						Draft preview — this article is only visible on the local dev server and is excluded
+						from production builds.
+					</p>
+				)}
+
+				<div data-pagefind-body>
+					<header class="mb-8">
+						<h1
+							id="article-title"
+							class="text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl"
+							data-pagefind-meta="title"
+						>
+							{data.title}
+						</h1>
+						<p class="text-muted mt-4 text-lg text-pretty">{data.description}</p>
+						<div class="mt-5 flex flex-col gap-3">
+							<ArticleMeta
+								publishedAt={data.publishedAt}
+								updatedAt={data.updatedAt}
+								category={data.category}
+								minutes={minutes}
+							/>
+							<TagList tags={data.tags} />
+						</div>
+						<span hidden data-pagefind-meta="category">
+							{category.title}
+						</span>
+						<span hidden data-pagefind-meta="date">
+							{formatDate(data.publishedAt)}
+						</span>
+						<span hidden data-pagefind-filter="category">
+							{category.title}
+						</span>
+					</header>
+
+					{data.coverImage && (
+						<figure class="mb-8">
+							<Image
+								src={data.coverImage}
+								alt={data.coverImageAlt ?? ''}
+								widths={[480, 768, 1200]}
+								sizes="(min-width: 768px) 48rem, 100vw"
+								loading="eager"
+								class="border-border w-full rounded-lg border"
+							/>
+						</figure>
+					)}
+
+					{seriesPosition && <SeriesNav position={seriesPosition} variant="summary" />}
+
+					<div class="xl:hidden">
+						<TableOfContents headings={headings} variant="inline" />
+					</div>
+
+					<div class="prose prose-lg max-w-none">
+						<slot />
+					</div>
+				</div>
+
+				{seriesPosition && <SeriesNav position={seriesPosition} variant="footer" />}
+
+				<RelatedArticles articles={related} />
+
+				<footer class="border-border text-muted mt-12 flex flex-wrap justify-between gap-4 border-t pt-6 text-sm">
+					<a href={routes.articles}>
+						<span aria-hidden="true">← </span>Back to all articles
+					</a>
+					<span>
+						Published{' '}
+						<time datetime={isoDate(data.publishedAt)}>{formatDate(data.publishedAt)}</time>
+						by {data.author}
+					</span>
+				</footer>
+			</article>
+
+			<div class="hidden xl:block">
+				<div class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto">
+					<TableOfContents headings={headings} variant="sidebar" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{features.hasMermaid && <MermaidLoader />}
+</BaseLayout>

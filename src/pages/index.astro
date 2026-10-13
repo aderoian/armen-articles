@@ -1,0 +1,113 @@
+---
+import ArticleCard from '@/components/article/ArticleCard.astro';
+import ArticleList from '@/components/article/ArticleList.astro';
+import SearchForm from '@/components/search/SearchForm.astro';
+import { categories, categoryKeys } from '@/data/categories';
+import { site } from '@/data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getArticles } from '@/lib/articles/collection';
+import { featuredArticles } from '@/lib/articles/filters';
+import { countByCategory } from '@/lib/articles/taxonomy';
+import { routes } from '@/lib/utils/routes';
+
+const articles = await getArticles();
+const featured = featuredArticles(articles, site.featuredArticleCount);
+const featuredIds = new Set(featured.map((article) => article.id));
+const recent = articles
+	.filter((article) => !featuredIds.has(article.id))
+	.slice(0, site.recentArticleCount);
+const counts = countByCategory(articles);
+const categoryLinks = categoryKeys
+	.filter((key) => counts.has(key))
+	.map((key) => ({ key, title: categories[key].title, count: counts.get(key) ?? 0 }));
+
+const websiteJsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'WebSite',
+	name: site.name,
+	url: site.url,
+	description: site.description,
+	author: { '@type': 'Person', name: site.author.name, url: site.author.url },
+	potentialAction: {
+		'@type': 'SearchAction',
+		target: `${site.url}${routes.search}?q={query}`,
+		'query-input': 'required name=query'
+	}
+};
+---
+
+<BaseLayout title={site.name} description={site.description} jsonLd={[websiteJsonLd]}>
+	<div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
+		<section aria-labelledby="intro-heading" class="mb-12">
+			<h1 id="intro-heading" class="text-3xl font-semibold tracking-tight sm:text-4xl">
+				{site.author.name}
+			</h1>
+			<p class="text-muted mt-3 text-lg text-pretty">{site.description}</p>
+			<p class="mt-3 text-sm">
+				<a href={site.author.url}>Portfolio and projects at armenderoian.dev</a>
+				<span aria-hidden="true" class="text-muted">
+					{' '}
+					·{' '}
+				</span>
+				<a href={routes.rss}>RSS feed</a>
+			</p>
+			<div class="mt-8">
+				<SearchForm id="home-search" />
+			</div>
+		</section>
+
+		{categoryLinks.length > 0 && (
+			<nav aria-labelledby="categories-heading" class="mb-12">
+				<h2
+					id="categories-heading"
+					class="text-muted mb-3 text-sm font-semibold tracking-wider uppercase"
+				>
+					Categories
+				</h2>
+				<ul class="flex flex-wrap gap-2">
+					{categoryLinks.map((category) => (
+						<li>
+							<a
+								href={routes.category(category.key)}
+								class="border-border text-text hover:border-accent hover:text-accent inline-flex min-h-10 items-center gap-2 rounded-md border px-3 text-sm no-underline"
+							>
+								{category.title}
+								<span class="text-muted text-xs">
+									{category.count}
+									<span class="sr-only">{category.count === 1 ? 'article' : 'articles'}</span>
+								</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</nav>
+		)}
+
+		{featured.length > 0 && (
+			<section aria-labelledby="featured-heading" class="mb-12">
+				<h2 id="featured-heading" class="mb-4 text-xl font-semibold tracking-tight">
+					Featured
+				</h2>
+				<ul class="flex flex-col gap-4">
+					{featured.map((article) => (
+						<li>
+							<ArticleCard article={article} headingLevel={3} />
+						</li>
+					))}
+				</ul>
+			</section>
+		)}
+
+		<section aria-labelledby="recent-heading">
+			<div class="mb-4 flex items-baseline justify-between gap-4">
+				<h2 id="recent-heading" class="text-xl font-semibold tracking-tight">
+					Recent articles
+				</h2>
+				<a href={routes.articles} class="text-sm">
+					Browse the archive<span aria-hidden="true"> →</span>
+				</a>
+			</div>
+			<ArticleList articles={recent} headingLevel={3} label="Recent articles" />
+		</section>
+	</div>
+</BaseLayout>

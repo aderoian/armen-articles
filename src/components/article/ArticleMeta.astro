@@ -1,0 +1,46 @@
+---
+import { categories, type CategoryKey } from '@/data/categories';
+import { formatDate, isoDate } from '@/lib/utils/dates';
+import { routes } from '@/lib/utils/routes';
+
+export interface Props {
+	publishedAt: Date;
+	updatedAt?: Date | undefined;
+	category: CategoryKey;
+	minutes: number;
+	/** Render the category as plain text (e.g. inside a card whose title is the link). */
+	linkCategory?: boolean;
+}
+
+const { publishedAt, updatedAt, category, minutes, linkCategory = true } = Astro.props;
+const categoryTitle = categories[category].title;
+---
+
+<p class="text-muted flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+	<span>
+		<span class="sr-only">Published </span>
+		<time datetime={isoDate(publishedAt)}>{formatDate(publishedAt)}</time>
+	</span>
+	{updatedAt && (
+		<>
+			<span aria-hidden="true">·</span>
+			<span>
+				Updated <time datetime={isoDate(updatedAt)}>{formatDate(updatedAt)}</time>
+			</span>
+		</>
+	)}
+	<span aria-hidden="true">·</span>
+	<span>{minutes} min read</span>
+	<span aria-hidden="true">·</span>
+	{linkCategory ? (
+		<a href={routes.category(category)} class="relative font-medium">
+			<span class="sr-only">Category: </span>
+			{categoryTitle}
+		</a>
+	) : (
+		<span class="text-text font-medium">
+			<span class="sr-only">Category: </span>
+			{categoryTitle}
+		</span>
+	)}
+</p>

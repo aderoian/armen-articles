@@ -1,0 +1,37 @@
+---
+import ArticleList from '@/components/article/ArticleList.astro';
+import Pagination from '@/components/navigation/Pagination.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { site } from '@/data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import type { Article } from '@/lib/articles/collection';
+import type { Page } from '@/lib/articles/pagination';
+
+export interface Props {
+	page: Page<Article>;
+	totalArticles: number;
+}
+
+const { page, totalArticles } = Astro.props;
+const suffix = page.current > 1 ? ` (page ${page.current} of ${page.total})` : '';
+---
+
+<BaseLayout
+	title={`All articles${suffix} · ${site.author.name}`}
+	description={`Every article on ${site.name}, newest first${suffix}.`}
+>
+	<div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+		<PageHeader
+			title="All articles"
+			description={`${totalArticles} ${totalArticles === 1 ? 'article' : 'articles'}, newest first.`}
+		>
+			{page.total > 1 && (
+				<p class="text-muted mt-2 text-sm">
+					Page {page.current} of {page.total}
+				</p>
+			)}
+		</PageHeader>
+		<ArticleList articles={page.items} label="Articles" />
+		<Pagination page={page} />
+	</div>
+</BaseLayout>

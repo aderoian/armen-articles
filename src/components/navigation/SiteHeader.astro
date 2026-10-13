@@ -1,0 +1,74 @@
+---
+import ThemeToggle from '@/components/ui/ThemeToggle.astro';
+import { site } from '@/data/site';
+import { publicPath, routes } from '@/lib/utils/routes';
+
+const links = [
+	{ href: routes.articles, label: 'Articles' },
+	{ href: routes.categories, label: 'Categories' },
+	{ href: routes.seriesIndex, label: 'Series' },
+	{ href: routes.tags, label: 'Tags' }
+];
+
+const path = publicPath(Astro.url.pathname);
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="border-border bg-bg/90 sticky top-0 z-30 border-b backdrop-blur">
+	<div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-2 sm:px-6">
+		<a
+			href={routes.home}
+			class="text-text flex min-h-10 items-center gap-2 font-semibold tracking-tight no-underline"
+		>
+			<span
+				aria-hidden="true"
+				class="bg-accent text-bg inline-flex size-7 items-center justify-center rounded font-mono text-sm"
+			>
+				AD
+			</span>
+			<span>
+				{site.author.name}
+				<span class="text-muted font-normal"> / Articles</span>
+			</span>
+		</a>
+
+		<div class="flex items-center gap-1 sm:order-last">
+			<a
+				href={routes.search}
+				class="text-muted hover:text-text hover:bg-surface inline-flex size-10 items-center justify-center rounded-md"
+				aria-current={isCurrent(routes.search) ? 'page' : undefined}
+			>
+				<span class="sr-only">Search articles</span>
+				<svg
+					class="size-5"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linecap="round"
+					aria-hidden="true"
+				>
+					<circle cx="11" cy="11" r="7"></circle>
+					<path d="m20 20-3.5-3.5"></path>
+				</svg>
+			</a>
+			<ThemeToggle />
+		</div>
+
+		<nav aria-label="Main" class="-mx-2 w-full overflow-x-auto sm:mx-0 sm:ml-auto sm:w-auto">
+			<ul class="flex items-center gap-1 text-sm">
+				{links.map((link) => (
+					<li>
+						<a
+							href={link.href}
+							aria-current={isCurrent(link.href) ? 'page' : undefined}
+							class="text-muted hover:text-text hover:bg-surface aria-[current=page]:text-text aria-[current=page]:bg-surface inline-flex min-h-10 items-center rounded-md px-3 no-underline aria-[current=page]:font-medium"
+						>
+							{link.label}
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+	</div>
+</header>

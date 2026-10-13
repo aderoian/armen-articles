@@ -1,0 +1,25 @@
+---
+import ArticleCard from '@/components/article/ArticleCard.astro';
+import type { Article } from '@/lib/articles/collection';
+
+export interface Props {
+	articles: Article[];
+}
+
+const { articles } = Astro.props;
+---
+
+{articles.length > 0 && (
+	<section aria-labelledby="related-heading" class="mt-12" data-pagefind-ignore>
+		<h2 id="related-heading" class="mb-4 text-xl font-semibold tracking-tight">
+			Related articles
+		</h2>
+		<ul class="flex flex-col gap-4">
+			{articles.map((article) => (
+				<li>
+					<ArticleCard article={article} headingLevel={3} showCover={false} />
+				</li>
+			))}
+		</ul>
+	</section>
+)}

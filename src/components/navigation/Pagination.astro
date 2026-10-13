@@ -1,0 +1,54 @@
+---
+import type { Page } from '@/lib/articles/pagination';
+import { routes } from '@/lib/utils/routes';
+
+export interface Props {
+	page: Pick<Page<unknown>, 'current' | 'total' | 'previous' | 'next'>;
+}
+
+const { page } = Astro.props;
+const numbers = Array.from({ length: page.total }, (_, index) => index + 1);
+const linkClass =
+	'border-border hover:border-accent inline-flex min-h-10 min-w-10 items-center justify-center rounded-md border px-3 no-underline';
+---
+
+{page.total > 1 && (
+	<nav aria-label="Pagination" class="mt-10">
+		<ul class="flex flex-wrap items-center justify-center gap-2 text-sm">
+			<li>
+				{page.previous ? (
+					<a href={routes.articlesPage(page.previous)} rel="prev" class={linkClass}>
+						<span aria-hidden="true">←&nbsp;</span>Newer
+					</a>
+				) : (
+					<span class={`${linkClass} text-muted opacity-50`} aria-disabled="true">
+						<span aria-hidden="true">←&nbsp;</span>Newer
+					</span>
+				)}
+			</li>
+			{numbers.map((number) => (
+				<li>
+					<a
+						href={routes.articlesPage(number)}
+						class={`${linkClass} aria-[current=page]:bg-accent aria-[current=page]:text-bg aria-[current=page]:border-accent`}
+						aria-current={number === page.current ? 'page' : undefined}
+					>
+						<span class="sr-only">Page </span>
+						{number}
+					</a>
+				</li>
+			))}
+			<li>
+				{page.next ? (
+					<a href={routes.articlesPage(page.next)} rel="next" class={linkClass}>
+						Older<span aria-hidden="true">&nbsp;→</span>
+					</a>
+				) : (
+					<span class={`${linkClass} text-muted opacity-50`} aria-disabled="true">
+						Older<span aria-hidden="true">&nbsp;→</span>
+					</span>
+				)}
+			</li>
+		</ul>
+	</nav>
+)}

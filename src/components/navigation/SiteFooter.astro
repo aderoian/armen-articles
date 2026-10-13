@@ -1,0 +1,25 @@
+---
+import { site } from '@/data/site';
+import { routes } from '@/lib/utils/routes';
+
+const year = new Date().getUTCFullYear();
+---
+
+<footer class="border-border text-muted mt-16 border-t text-sm">
+	<div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+		<p>
+			© {year} {site.author.name}. Written and published from a Git repository.
+		</p>
+		<ul class="flex flex-wrap gap-x-5 gap-y-2">
+			<li>
+				<a href={routes.articles}>Archive</a>
+			</li>
+			<li>
+				<a href={routes.rss}>RSS feed</a>
+			</li>
+			<li>
+				<a href={site.author.url}>armenderoian.dev</a>
+			</li>
+		</ul>
+	</div>
+</footer>

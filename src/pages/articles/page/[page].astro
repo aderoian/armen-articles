@@ -1,0 +1,29 @@
+---
+import type { GetStaticPaths } from 'astro';
+import ArchivePage from '@/components/article/ArchivePage.astro';
+import { site } from '@/data/site';
+import { getArticles, type Article } from '@/lib/articles/collection';
+import { pageCount, paginate, type Page } from '@/lib/articles/pagination';
+
+// Page 1 lives at /articles; this route generates /articles/page/2 onwards.
+export const getStaticPaths = (async () => {
+	const articles = await getArticles();
+	const total = pageCount(articles.length, site.articlesPerPage);
+	return Array.from({ length: Math.max(0, total - 1) }, (_, index) => {
+		const number = index + 2;
+		return {
+			params: { page: String(number) },
+			props: { page: paginate(articles, site.articlesPerPage, number), total: articles.length }
+		};
+	});
+}) satisfies GetStaticPaths;
+
+interface Props {
+	page: Page<Article>;
+	total: number;
+}
+
+const { page, total } = Astro.props;
+---
+
+<ArchivePage page={page} totalArticles={total} />

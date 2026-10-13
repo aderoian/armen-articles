@@ -1,0 +1,84 @@
+---
+// Toggles between light and dark. The initial theme is applied before paint by
+// /scripts/theme-init.js; this component only handles user changes.
+---
+
+<button
+	type="button"
+	class="theme-toggle text-muted hover:text-text hover:bg-surface inline-flex size-10 items-center justify-center rounded-md"
+	aria-pressed="false"
+	data-theme-toggle
+>
+	<span class="sr-only">Dark theme</span>
+	<svg
+		class="theme-icon-moon size-5"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.75"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<path d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646Z"></path>
+	</svg>
+	<svg
+		class="theme-icon-sun size-5"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.75"
+		stroke-linecap="round"
+		aria-hidden="true"
+	>
+		<circle cx="12" cy="12" r="4"></circle>
+		<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+	</svg>
+</button>
+
+<style>
+	:global([data-theme='dark']) .theme-icon-moon,
+	:global(:root:not([data-theme='dark'])) .theme-icon-sun {
+		display: none;
+	}
+</style>
+
+<script>
+	type Theme = 'light' | 'dark';
+	const root = document.documentElement;
+	const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+	function readStored(): Theme | null {
+		try {
+			const value = localStorage.getItem('theme');
+			return value === 'light' || value === 'dark' ? value : null;
+		} catch {
+			return null;
+		}
+	}
+
+	function apply(theme: Theme) {
+		root.dataset.theme = theme;
+		for (const button of document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')) {
+			button.setAttribute('aria-pressed', String(theme === 'dark'));
+		}
+	}
+
+	apply(root.dataset.theme === 'dark' ? 'dark' : 'light');
+
+	for (const button of document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')) {
+		button.addEventListener('click', () => {
+			const next: Theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+			try {
+				localStorage.setItem('theme', next);
+			} catch {
+				// Storage can be unavailable (privacy mode); the toggle still works for this page.
+			}
+			apply(next);
+		});
+	}
+
+	media.addEventListener('change', (event) => {
+		if (readStored() === null) apply(event.matches ? 'dark' : 'light');
+	});
+</script>

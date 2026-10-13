@@ -1,0 +1,11 @@
+---
+import ArchivePage from '@/components/article/ArchivePage.astro';
+import { site } from '@/data/site';
+import { getArticles } from '@/lib/articles/collection';
+import { paginate } from '@/lib/articles/pagination';
+
+const articles = await getArticles();
+const page = paginate(articles, site.articlesPerPage, 1);
+---
+
+<ArchivePage page={page} totalArticles={articles.length} />

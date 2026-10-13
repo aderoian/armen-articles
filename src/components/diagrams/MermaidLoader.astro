@@ -1,0 +1,17 @@
+---
+// Rendered only by articles whose Markdown contains ```mermaid blocks (detected
+// at build time), so other pages never download Mermaid.
+---
+
+<script>
+	import { renderDiagrams } from './mermaid-client';
+
+	const figures = [...document.querySelectorAll<HTMLElement>('figure[data-mermaid]')];
+	if (figures.length > 0) {
+		void renderDiagrams(figures);
+		new MutationObserver(() => void renderDiagrams(figures)).observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ['data-theme']
+		});
+	}
+</script>

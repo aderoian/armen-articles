@@ -1,0 +1,41 @@
+---
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { site } from '@/data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getArticles } from '@/lib/articles/collection';
+import { collectTags } from '@/lib/articles/taxonomy';
+import { routes } from '@/lib/utils/routes';
+
+const tags = collectTags(await getArticles()).sort((a, b) => a.tag.localeCompare(b.tag));
+---
+
+<BaseLayout
+	title={`Tags · ${site.author.name}`}
+	description="Every topic tag used across articles."
+>
+	<div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+		<PageHeader
+			title="Tags"
+			description={`${tags.length} topic tags, alphabetically. The number shows how many articles use each tag.`}
+		/>
+		<ul class="flex flex-wrap gap-2">
+			{tags.map((tag) => (
+				<li>
+					<a
+						href={routes.tag(tag.tag)}
+						class="border-border text-text hover:border-accent hover:text-accent inline-flex min-h-10 items-center gap-2 rounded-full border px-4 font-mono text-sm no-underline"
+					>
+						<span>
+							<span aria-hidden="true">#</span>
+							{tag.tag}
+						</span>
+						<span class="bg-surface text-muted rounded-full px-2 text-xs">
+							{tag.count}
+							<span class="sr-only">{tag.count === 1 ? 'article' : 'articles'}</span>
+						</span>
+					</a>
+				</li>
+			))}
+		</ul>
+	</div>
+</BaseLayout>

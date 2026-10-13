@@ -1,0 +1,25 @@
+---
+export interface Props {
+	type?: 'note' | 'tip' | 'warning';
+	title?: string;
+}
+
+const labels = { note: 'Note', tip: 'Tip', warning: 'Warning' } as const;
+const { type = 'note', title = labels[type] } = Astro.props;
+---
+
+<aside
+	class:list={[
+		'callout not-prose my-6 rounded-lg border-l-4 px-4 py-3 text-base',
+		type === 'warning' ? 'border-warning bg-warning-soft' : 'border-accent bg-accent-soft'
+	]}
+	aria-label={title}
+>
+	<p class:list={['font-semibold', type === 'warning' ? 'text-warning' : 'text-accent']}>
+		<span aria-hidden="true">{type === 'warning' ? '⚠ ' : type === 'tip' ? '✓ ' : 'ℹ '}</span>
+		{title}
+	</p>
+	<div class="callout-body mt-1 leading-relaxed [&_a]:underline [&_code]:font-mono [&_p+p]:mt-2">
+		<slot />
+	</div>
+</aside>

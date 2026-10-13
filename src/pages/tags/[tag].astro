@@ -1,0 +1,47 @@
+---
+import type { GetStaticPaths } from 'astro';
+import ArticleList from '@/components/article/ArticleList.astro';
+import Breadcrumbs from '@/components/navigation/Breadcrumbs.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { site } from '@/data/site';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getArticles, type Article } from '@/lib/articles/collection';
+import { collectTags, filterByTagSlug, type TagSummary } from '@/lib/articles/taxonomy';
+import { routes } from '@/lib/utils/routes';
+
+export const getStaticPaths = (async () => {
+	const articles = await getArticles();
+	return collectTags(articles).map((tag) => ({
+		params: { tag: tag.slug },
+		props: { tag, articles: filterByTagSlug(articles, tag.slug) }
+	}));
+}) satisfies GetStaticPaths;
+
+interface Props {
+	tag: TagSummary;
+	articles: Article[];
+}
+
+const { tag, articles } = Astro.props;
+const label = `#${tag.tag}`;
+---
+
+<BaseLayout
+	title={`Articles tagged ${label} · ${site.author.name}`}
+	description={`${articles.length} ${articles.length === 1 ? 'article' : 'articles'} tagged ${label}.`}
+>
+	<div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+		<Breadcrumbs
+			items={[
+				{ name: 'Tags', path: routes.tags },
+				{ name: label, path: routes.tag(tag.tag) }
+			]}
+		/>
+		<PageHeader
+			eyebrow="Tag"
+			title={label}
+			description={`${articles.length} ${articles.length === 1 ? 'article' : 'articles'}, newest first.`}
+		/>
+		<ArticleList articles={articles} label={`Articles tagged ${label}`} />
+	</div>
+</BaseLayout>

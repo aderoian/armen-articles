@@ -1,0 +1,56 @@
+---
+import { Image } from 'astro:assets';
+import ArticleMeta from '@/components/article/ArticleMeta.astro';
+import TagList from '@/components/article/TagList.astro';
+import type { Article } from '@/lib/articles/collection';
+import { readingTime } from '@/lib/articles/reading-time';
+import { routes } from '@/lib/utils/routes';
+
+export interface Props {
+	article: Article;
+	headingLevel?: 2 | 3;
+	showCover?: boolean;
+}
+
+const { article, headingLevel = 2, showCover = true } = Astro.props;
+const { data } = article;
+const Heading = `h${headingLevel}` as const;
+const { minutes } = readingTime(article.body ?? '');
+---
+
+<article class="group border-border hover:border-border-strong relative grid gap-4 rounded-lg border p-5 transition-colors sm:grid-cols-[minmax(0,1fr)_auto]">
+	<div class="flex min-w-0 flex-col gap-2">
+		{data.draft && (
+			<p class="bg-warning-soft text-warning w-fit rounded px-2 py-0.5 text-xs font-semibold tracking-wide uppercase">
+				Draft
+			</p>
+		)}
+		<Heading class="text-lg leading-snug font-semibold tracking-tight">
+			<a
+				href={routes.article(article.id)}
+				class="text-text group-hover:text-accent no-underline after:absolute after:inset-0 after:content-['']"
+			>
+				{data.title}
+			</a>
+		</Heading>
+		<p class="text-muted line-clamp-3">{data.description}</p>
+		<ArticleMeta
+			publishedAt={data.publishedAt}
+			updatedAt={data.updatedAt}
+			category={data.category}
+			minutes={minutes}
+		/>
+		<div class="relative">
+			<TagList tags={data.tags} label={`Tags for ${data.title}`} />
+		</div>
+	</div>
+	{showCover && data.coverImage && (
+		<Image
+			src={data.coverImage}
+			alt=""
+			widths={[160, 320]}
+			sizes="160px"
+			class="border-border hidden aspect-[3/2] w-40 rounded-md border object-cover sm:block"
+		/>
+	)}
+</article>
