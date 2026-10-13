@@ -198,6 +198,14 @@
 	@apply border-border rounded-lg border;
 }
 
+.prose ul.contains-task-list {
+	@apply list-none ps-0;
+}
+
+.prose .task-list-item input {
+	@apply accent-accent me-2 align-middle;
+}
+
 .prose .footnotes {
 	@apply border-border text-muted mt-12 border-t pt-6 text-sm;
 }
