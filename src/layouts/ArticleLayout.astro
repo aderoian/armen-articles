@@ -149,7 +149,8 @@ const breadcrumbs = [
 					<span>
 						Published{' '}
 						<time datetime={isoDate(data.publishedAt)}>{formatDate(data.publishedAt)}</time>
-						by {data.author}
+						{' · '}
+						{data.author}
 					</span>
 				</footer>
 			</article>
