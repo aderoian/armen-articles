@@ -1,0 +1,54 @@
+---
+title: 'Feature Tour, Part 3: Interactive Components in MDX'
+description: A demonstration of embedding a small interactive React component in an MDX article, using a byte-sized two's complement explorer.
+publishedAt: 2026-09-15
+category: systems-programming
+tags: [mdx, interactive, binary, c]
+draft: false
+series: publication-demo
+seriesOrder: 3
+---
+
+import BitExplorer from '@/components/interactive/BitExplorer';
+import Callout from '@/components/ui/Callout.astro';
+
+<Callout title="Demonstration content">
+  This article shows how MDX articles can embed components. The explanation of two's complement is
+  standard textbook material.
+</Callout>
+
+MDX articles can import components and use them alongside Markdown. Static components, like the callout above, render to plain HTML at build time. Interactive components are hydrated as small islands, and only on the pages that use them. This is the only article that loads the script for the explorer below.
+
+## Two's complement in one byte
+
+A byte has eight bits. Read as an **unsigned** integer, the bits have weights $2^7$ through $2^0$, giving values from 0 to 255. In **two's complement**, the most significant bit instead has weight $-2^7$, giving values from $-128$ to $127$:
+
+$$
+x = -b_7 \cdot 2^7 + \sum_{i=0}^{6} b_i \cdot 2^i
+$$
+
+Try flipping bits. Setting only bit 7 gives 128 as an unsigned value but $-128$ as a signed one. Setting every bit gives 255 and $-1$.
+
+<BitExplorer client:visible initial={42} />
+
+## The same idea in C
+
+Converting between the two interpretations does not change any bits; it only changes how they are read:
+
+```c title="reinterpret.c"
+#include <stdint.h>
+#include <stdio.h>
+
+int main(void)
+{
+    uint8_t raw = 0xFF;
+    int8_t as_signed = (int8_t)raw; /* implementation-defined before C23; -1 in practice */
+    printf("%u %d\n", raw, as_signed);
+    return 0;
+}
+```
+
+<Callout type="tip" title="Writing your own islands">
+  Interactive components live in `src/components/interactive/`. The authoring guide explains how to
+  add one and how to choose a hydration directive.
+</Callout>
