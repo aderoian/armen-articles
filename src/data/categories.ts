@@ -25,6 +25,11 @@ export const categories = {
 	'site-notes': {
 		title: 'Site Notes',
 		description: 'Notes about this publication itself: how it is built and how content is authored.'
+	},
+	'game-development': {
+		title: 'Game Development',
+		description:
+			'Engine architecture, simulation, physics, and multiplayer networking, mostly from building Gildenkrieg.'
 	}
 } as const satisfies Record<string, CategoryDefinition>;
 

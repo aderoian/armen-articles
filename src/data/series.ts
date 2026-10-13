@@ -13,6 +13,11 @@ export const series = {
 		title: 'Publication Feature Tour',
 		description:
 			'A demonstration series that walks through the rendering features of this site: code, math, diagrams, and interactive components.'
+	},
+	'gildenkrieg-simulation-devlog': {
+		title: 'Gildenkrieg Simulation Devlog Series',
+		description:
+			'A 3-part devlog series covering how I built a multiplayer-ready entity API, authoritative simulation engine, and network replication for Gildenkrieg.'
 	}
 } as const satisfies Record<string, SeriesDefinition>;
 

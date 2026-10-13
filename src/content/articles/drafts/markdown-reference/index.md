@@ -5,7 +5,7 @@ publishedAt: 2026-08-20
 updatedAt: 2026-09-30
 category: site-notes
 tags: [markdown, publishing, accessibility]
-draft: false
+draft: true
 ---
 
 > **Demonstration content.** This page is a rendering reference for the site's Markdown styles.

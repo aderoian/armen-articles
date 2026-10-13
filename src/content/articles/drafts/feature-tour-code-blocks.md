@@ -4,11 +4,11 @@ description: A demonstration of syntax highlighting across twelve languages, wit
 publishedAt: 2026-09-01
 category: tooling
 tags: [code, syntax-highlighting, c++, rust]
-draft: false
-featured: true
+draft: true
+featured: false
 series: publication-demo
 seriesOrder: 1
-coverImage: ../../assets/covers/code-blocks.png
+coverImage: ../../../assets/covers/code-blocks.png
 coverImageAlt: Abstract illustration of indented lines of code inside an editor frame.
 ---
 

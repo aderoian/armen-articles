@@ -4,7 +4,7 @@ description: A demonstration of build-time KaTeX equations and theme-aware Merma
 publishedAt: 2026-09-22
 category: graphics
 tags: [math, diagrams, linear-algebra]
-draft: false
+draft: true
 series: publication-demo
 seriesOrder: 2
 ---

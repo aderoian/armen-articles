@@ -4,9 +4,9 @@ description: What this site is, how articles are written and published from a Gi
 publishedAt: 2026-10-01
 category: site-notes
 tags: [astro, publishing, static-sites]
-draft: false
-featured: true
-coverImage: ../../assets/covers/publication.png
+draft: true
+featured: false
+coverImage: ../../../assets/covers/publication.png
 coverImageAlt: Abstract illustration of an article page with a sidebar table of contents.
 ---
 
