@@ -17,12 +17,14 @@ describe('Pagefind search index', () => {
 	});
 
 	it('indexes titles, descriptions, headings, and body text with metadata', () => {
-		const tour = fragments.find((f) => f.url.includes('feature-tour-math-and-diagrams'));
-		expect(tour?.meta['title']).toBe('Feature Tour, Part 2: Math and Diagrams');
-		expect(tour?.meta['category']).toBe('Graphics');
-		expect(tour?.content).toContain('A demonstration of build-time KaTeX equations');
-		expect(tour?.content).toContain('Linear interpolation between two values');
-		expect(tour?.anchors.map((anchor) => anchor.text)).toContain('Inline and display math');
+		const planet = fragments.find((f) => f.url.includes('browser-procedural-planet'));
+		expect(planet?.meta['title']).toBe('Devlog: Growing a Tiny Procedural Planet in the Browser');
+		expect(planet?.meta['category']).toBe('Graphics');
+		expect(planet?.content).toContain('How I built the seeded planet generator');
+		expect(planet?.content).toContain('A sphere is easy. A world needs relationships.');
+		expect(planet?.anchors.map((anchor) => anchor.text)).toContain(
+			'The goal: a world, not a sphere'
+		);
 	});
 
 	it('leaves navigation chrome and screen-reader hints out of the index', () => {
