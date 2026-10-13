@@ -15,6 +15,7 @@ export default defineConfig({
 		format: 'file'
 	},
 	devToolbar: { enabled: false },
+	prerenderConflictBehavior: 'error',
 	markdown: {
 		processor: markdownProcessor()
 	},
