@@ -5,12 +5,12 @@
 	"type": "module",
 	"description": "Static technical publication for articles.armenderoian.dev",
 	"engines": {
-		"node": ">=22.12.0"
+		"node": ">=22.18.0"
 	},
 	"scripts": {
 		"dev": "astro dev",
 		"sync": "astro sync",
-		"build": "astro build && pagefind --site dist",
+		"build": "astro build && pagefind --site dist && node scripts/generate-headers.ts",
 		"preview": "astro preview",
 		"preview:worker": "wrangler dev",
 		"check": "astro check",

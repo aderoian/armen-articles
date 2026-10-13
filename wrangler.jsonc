@@ -1,0 +1,19 @@
+// Cloudflare Workers configuration: a static-assets-only Worker (no server code).
+// `npm run build` writes the site to ./dist; `wrangler deploy` uploads it.
+// Deployment is performed by .github/workflows/deploy.yml from the `main` branch.
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "armen-articles",
+	"compatibility_date": "2026-10-01",
+	"assets": {
+		"directory": "./dist",
+		// Serve dist/404.html with a 404 status for unknown paths.
+		"not_found_handling": "404-page",
+		// `/articles/foo` serves `articles/foo.html`; `/articles/foo/` redirects to it.
+		"html_handling": "auto-trailing-slash"
+	},
+	"routes": [{ "pattern": "articles.armenderoian.dev", "custom_domain": true }],
+	"workers_dev": false,
+	"preview_urls": false,
+	"observability": { "enabled": false }
+}
